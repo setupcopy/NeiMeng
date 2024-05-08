@@ -1,19 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
+// Copyright (c) Duende Software. All rights reserved.
+// See LICENSE in the project root for license information.
+
+using Duende.IdentityServer;
+using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Identity.Pages;
+namespace Identity.Pages.Home;
 
-public class IndexModel : PageModel
+[AllowAnonymous]
+public class Index : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
-
-    public IndexModel(ILogger<IndexModel> logger)
+    public Index(IdentityServerLicense? license = null)
     {
-        _logger = logger;
+        License = license;
     }
 
-    public void OnGet()
+    public string Version
     {
-
+        get => typeof(Duende.IdentityServer.Hosting.IdentityServerMiddleware).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            ?.InformationalVersion.Split('+').First()
+            ?? "unavailable";
     }
+    public IdentityServerLicense? License { get; }
 }
